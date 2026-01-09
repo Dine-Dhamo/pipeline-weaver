@@ -25,12 +25,13 @@ export const NodeHandle: React.FC<NodeHandleProps> = ({
         type={type}
         position={position}
         style={{
-          width: 10,
-          height: 10,
+          width: 12,
+          height: 12,
           borderRadius: "50%",
           border: "2px solid",
           borderColor: type === "source" ? "hsl(var(--primary))" : "hsl(var(--accent))",
           backgroundColor: type === "source" ? "hsl(var(--primary))" : "hsl(var(--accent))",
+          transform: "translateY(-50%)",
           ...style,
         }}
       />
@@ -38,9 +39,8 @@ export const NodeHandle: React.FC<NodeHandleProps> = ({
         <span
           className="absolute text-[10px] font-mono text-muted-foreground pointer-events-none whitespace-nowrap"
           style={{
-            top: style?.top,
-            transform: "translateY(-50%)",
-            ...(isLeft ? { left: 16 } : { right: 16 }),
+            top: `calc(${style?.top || '50%'} + 10px)`,
+            ...(isLeft ? { left: -4, transform: 'translateX(-100%)' } : { right: -4, transform: 'translateX(100%)' }),
           }}
         >
           {label}
