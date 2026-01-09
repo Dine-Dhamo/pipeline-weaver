@@ -1,73 +1,134 @@
-# Welcome to your Lovable project
+# Pipeline Builder - Visual Workflow Editor
 
-## Project info
+A visual node-based pipeline editor built with React, React Flow, and TypeScript. This implements a config-driven node factory pattern for rapid development.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+## 🚀 Features
 
-## How can I edit this code?
+### Part 1: Node Abstraction (Config-Driven Factory Pattern)
 
-There are several ways of editing your application.
+All nodes are created from a single configuration file, enabling rapid development of new node types:
 
-**Use Lovable**
+- **Config-driven architecture**: Define nodes with metadata, data schemas, and handles
+- **9 node types included**: Input, Output, LLM, Text, Math, Delay, Logger, Switch, API Call
+- **Flexible field types**: Text input, Selection, Textarea (auto-resize), Number
+- **Dynamic handles**: Automatically create handles from `{{variable}}` patterns in text
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+### Part 2: Styling
 
-Changes made via Lovable will be committed automatically to this repo.
+Beautiful, unified design with:
 
-**Use your preferred IDE**
+- **Dark theme** with sophisticated color palette
+- **Color-coded node types** for easy identification
+- **Smooth animations** and hover effects
+- **Professional UI** with React Flow customizations
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+### Part 3: Text Node Logic
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+The Text node supports:
 
-Follow these steps:
+- **Auto-resizing**: Node height adjusts based on text content
+- **Variable extraction**: Use `{{variableName}}` syntax to create dynamic input handles
+- **Real-time updates**: Handles appear/disappear as variables are added/removed
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+### Part 4: DAG Validation
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+Full pipeline analysis with:
 
-# Step 3: Install the necessary dependencies.
-npm i
+- **Client-side DAG detection** using depth-first search
+- **Visual results dialog** showing nodes, edges, and validation status
+- **Cycle detection** with helpful error messages
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+## 📁 Project Structure
+
+```
+src/
+├── components/
+│   ├── pipeline/
+│   │   ├── DraggableNode.tsx    # Toolbar node component
+│   │   ├── PipelineCanvas.tsx   # React Flow canvas
+│   │   ├── PipelineToolbar.tsx  # Node toolbar
+│   │   └── SubmitButton.tsx     # Analysis & submit
+│   └── ui/                      # shadcn/ui components
+├── nodes/
+│   ├── components/
+│   │   ├── NodeHandle.tsx       # Handle component
+│   │   └── NodeWrapper.tsx      # Node container
+│   ├── config/
+│   │   └── nodeConfigs.ts       # Node configurations
+│   ├── fields/
+│   │   ├── NumberField.tsx
+│   │   ├── RenderField.tsx
+│   │   ├── SelectField.tsx
+│   │   ├── TextAreaField.tsx
+│   │   └── TextField.tsx
+│   ├── utils/
+│   │   └── extractVariables.ts  # Variable extraction
+│   └── NodeRenderer.tsx         # Main node factory
+├── store/
+│   └── pipelineStore.ts         # Zustand store
+├── utils/
+│   └── pipelineAnalysis.ts      # DAG validation
+└── pages/
+    └── Index.tsx                # Main page
 ```
 
-**Edit a file directly in GitHub**
+## 🎯 Creating New Nodes
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+To add a new node type, simply add a configuration to `src/nodes/config/nodeConfigs.ts`:
 
-**Use GitHub Codespaces**
+```typescript
+newNodeType: {
+  meta: {
+    title: "New Node",
+    icon: "🆕",
+    category: "processor",
+    color: "node-text",
+    defaultSize: { width: 240, height: 120 },
+    resizable: true,
+    showInToolBar: true,
+    description: "Description for tooltip",
+  },
+  dataSchema: [
+    {
+      key: "fieldName",
+      label: "Field Label",
+      fieldType: "textinput", // or "selection", "textarea", "number"
+      defaultValue: "",
+      placeholder: "Placeholder text...",
+    },
+  ],
+  handles: {
+    static: {
+      sources: [{ id: "output", side: "right", label: "out" }],
+      targets: [{ id: "input", side: "left", label: "in" }],
+    },
+    dynamic: false, // or { side: "left", deriveFrom: "text", pattern: /regex/ }
+  },
+  content: null,
+}
+```
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## 🔧 Technologies Used
 
-## What technologies are used for this project?
+- **React 18** - UI framework
+- **React Flow 11** - Node-based canvas
+- **Zustand** - State management
+- **TypeScript** - Type safety
+- **Tailwind CSS** - Styling
+- **shadcn/ui** - Component library
+- **Lucide React** - Icons
 
-This project is built with:
+## 📝 Usage
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+1. **Drag nodes** from the toolbar onto the canvas
+2. **Connect nodes** by dragging from output handles (right) to input handles (left)
+3. **Edit node fields** to configure behavior
+4. **Use variables** in Text nodes with `{{variableName}}` syntax
+5. **Click Submit** to analyze the pipeline and check for cycles
 
-## How can I deploy this project?
+## Development
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+```sh
+npm install
+npm run dev
+```
